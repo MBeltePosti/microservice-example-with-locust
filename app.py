@@ -1,6 +1,9 @@
 # This is a basic REST micro service example for python using the flask library
 # Docs: http://flask.pocoo.org/docs/1.0/
 import re
+import time
+
+START_TIME = time.time()
 
 from flask import Flask, jsonify, request
 from example_data import customers
@@ -13,26 +16,27 @@ app = Flask(__name__)
 # -----------------------------------------------------
 
 
-@app.route('/', methods=['GET'])
+@app.route("/", methods=["GET"])
 def index():
-    return 'DPNB Microservice Demonstrator'
+    return "DPNB Microservice Demonstrator"
+
 
 # Get a list of resources
-@app.route('/customers', methods=['GET'])
+@app.route("/customers", methods=["GET"])
 def find_all_customers():
     return jsonify(list(customers.values()))
 
 
 # Get a single resource
-@app.route('/customers/<customer_id>', methods=['GET'])
+@app.route("/customers/<customer_id>", methods=["GET"])
 def find_single_customer(customer_id):
     if customer_id not in customers:
-        return '', 404
+        return "", 404
     return jsonify(customers[customer_id])
 
 
 # Update a resource
-@app.route('/customers/<customer_id>', methods=['PUT'])
+@app.route("/customers/<customer_id>", methods=["PUT"])
 def update_customer(customer_id):
     if customer_id in customers:
 
@@ -41,35 +45,35 @@ def update_customer(customer_id):
 
         return jsonify(customers[customer_id])
     else:
-        return 'not found', 404
+        return "not found", 404
 
 
 # Delete a resource
-@app.route('/customers/<customer_id>', methods=['DELETE'])
+@app.route("/customers/<customer_id>", methods=["DELETE"])
 def delete_customer(customer_id):
     if customer_id in customers:
         del customers[customer_id]
-        return 'okay', 200
+        return "okay", 200
     else:
-        return 'not found', 404
+        return "not found", 404
 
 
 # Save a resource
 def find_last_key(customers):
     last_key = 0
     for customer in customers:
-        m = re.search(r'customer_(\d+)', customer)
+        m = re.search(r"customer_(\d+)", customer)
         if int(m.group(1)) > last_key:
             last_key = int(m.group(1))
 
     return last_key
 
 
-@app.route('/customers', methods=['POST'])
+@app.route("/customers", methods=["POST"])
 def save_customer():
-    customer_id = 'customer_{0}'.format(find_last_key(customers) + 1)
+    customer_id = "customer_{0}".format(find_last_key(customers) + 1)
     customers[customer_id] = request.json
-    customers[customer_id]['customer_id'] = customer_id
+    customers[customer_id]["customer_id"] = customer_id
 
     return jsonify(customers[customer_id])
 
@@ -78,7 +82,8 @@ def save_customer():
 # Basic example for an async method call
 # -----------------------------------------------------
 
-@app.route('/do_your_magic', methods=['POST'])
+
+@app.route("/do_your_magic", methods=["POST"])
 def do_magic():
     data = request.json
 
@@ -86,10 +91,10 @@ def do_magic():
     # process the data
 
     response_object = {
-        'list_of_magic_things': [
-            {'id': 'magic_thing_1'},
-            {'id': 'magic_thing_2'},
-            {'id': 'magic_thing_3'},
+        "list_of_magic_things": [
+            {"id": "magic_thing_1"},
+            {"id": "magic_thing_2"},
+            {"id": "magic_thing_3"},
         ]
     }
 
@@ -99,15 +104,16 @@ def do_magic():
     if success:
         return jsonify(response_object), 200
     else:
-        print('Uuuups something broke')
-        return 'Magic Error Message', 500
+        print("Uuuups something broke")
+        return "Magic Error Message", 500
 
 
 # -----------------------------------------------------
 # Simple example of a price calculation
 # -----------------------------------------------------
 
-@app.route('/calculate_price', methods=['POST'])
+
+@app.route("/calculate_price", methods=["POST"])
 def calculate_price():
     status = "Magic Error Message\n"
     success = True
@@ -117,11 +123,13 @@ def calculate_price():
     print(data)
     # process the data
     customer_list = []
-    if 'customers' in data:
-        customer_list = data['customers']
+    if "customers" in data:
+        customer_list = data["customers"]
 
     if len(customer_list) == 0:
-        status += 'Need at least one customer: {"customers": ["customer_1","customer_2"]}\n'
+        status += (
+            'Need at least one customer: {"customers": ["customer_1","customer_2"]}\n'
+        )
         success = False
 
     total_price = 0
@@ -130,17 +138,17 @@ def calculate_price():
     # for each factory add
     for customer in customer_list:
         if customer not in customers:
-            status += 'Customer ' + customer + ' was not found.\n'
+            status += "Customer " + customer + " was not found.\n"
             success = False
             break
 
-        if 'price' not in customers[customer]:
+        if "price" not in customers[customer]:
             customer_price = 0
         else:
-            customer_price = customers[customer]['price']
+            customer_price = customers[customer]["price"]
         step_price = customer_price * hours
 
-        per_step.append({'hours': hours, 'price': step_price})
+        per_step.append({"hours": hours, "price": step_price})
         total_price += step_price
 
         hours -= 1
@@ -154,12 +162,33 @@ def calculate_price():
         total_price *= 1.15
 
         response_object = {
-            'customers': customer_list,
-            'price': total_price,
-            'per_step': per_step
+            "customers": customer_list,
+            "price": total_price,
+            "per_step": per_step,
         }
 
         return jsonify(response_object), 200
     else:
-        print('Uuuups something broke')
+        print("Uuuups something broke")
         return status, 500
+
+
+# -----------------------------------------------------
+# Adding health check just for the sake of it
+# -----------------------------------------------------
+
+
+@app.route("/health", methods=["GET"])
+def health_check():
+    uptime_seconds = int(time.time() - START_TIME)
+    return (
+        jsonify(
+            {
+                "status": "ok",
+                "service": "dpnb-microservice",
+                "version": "1.0.0",
+                "uptime": f"{uptime_seconds}s",
+            }
+        ),
+        200,
+    )

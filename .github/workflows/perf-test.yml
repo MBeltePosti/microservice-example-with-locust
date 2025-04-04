@@ -1,0 +1,57 @@
+name: Run Performance Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  performance-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+
+    env:
+      TARGET_HOST: http://microservice:4999
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and start containers
+        run: |
+          docker-compose -f docker-compose.yml up --build -d
+
+      - name: Wait for services to be ready
+        run: sleep 15
+
+      - name: Run Locust tests (headless)
+        run: |
+          docker exec locust-master locust \
+            -f run_all.py \
+            --host=$TARGET_HOST \
+            --headless \
+            --tags smoke \
+            -u 10 -r 2 \
+            --run-time 1m \
+            --csv /app/results/perf
+
+      - name: Archive Locust results
+        run: |
+          mkdir -p artifacts
+          docker cp locust-master:/app/results ./artifacts
+
+      - name: Upload Locust results
+        uses: actions/upload-artifact@v4
+        with:
+          name: locust-results
+          path: ./artifacts/results
+
+      - name: Tear down containers
+        if: always()
+        run: docker-compose down

@@ -1,0 +1,64 @@
+version: '3.9'
+
+services:
+  locust-master:
+    build:
+      context: ./tests/performance/locust
+    container_name: locust-master
+    command: >
+      locust -f run_all.py
+      --master
+      --host=${TARGET_HOST}
+      --tags baseline
+    environment:
+      - TARGET_HOST=${TARGET_HOST}
+    ports:
+      - "8089:8089"
+    depends_on:
+      - microservice
+
+  locust-worker-1:
+    build:
+      context: ./tests/performance/locust
+    container_name: locust-worker-1
+    command: >
+      locust -f run_all.py
+      --worker
+      --master-host=locust-master
+    environment:
+      - TARGET_HOST=${TARGET_HOST}
+    depends_on:
+      - locust-master
+
+  locust-worker-2:
+    build:
+      context: ./tests/performance/locust
+    container_name: locust-worker-2
+    command: >
+      locust -f run_all.py
+      --worker
+      --master-host=locust-master
+    environment:
+      - TARGET_HOST=${TARGET_HOST}
+    depends_on:
+      - locust-master
+
+  locust-worker-3:
+    build:
+      context: ./tests/performance/locust
+    container_name: locust-worker-3
+    command: >
+      locust -f run_all.py
+      --worker
+      --master-host=locust-master
+    environment:
+      - TARGET_HOST=${TARGET_HOST}
+    depends_on:
+      - locust-master
+
+  microservice:
+    build:
+      context: .
+    container_name: microservice
+    ports:
+      - "4999:4999"

@@ -1,14 +1,17 @@
-FROM python:3
+FROM python:3.11
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-ADD app.py /usr/src/app/
-ADD example_data.py /usr/src/app/
-ADD requirements.txt /usr/src/app/
+# Copy app files and requirements
+COPY app.py example_data.py requirements.txt ./
 
-RUN pip3 install -r requirements.txt
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-ENV FLASK_APP /usr/src/app/app.py
-CMD ["flask", "run", "--host=0.0.0.0"]
+# Set Flask environment
+ENV FLASK_APP=app.py
 
-EXPOSE 5000
+# Start Flask app on port 4999
+CMD ["flask", "run", "--host=0.0.0.0", "--port=4999"]
+
+EXPOSE 4999

@@ -1,0 +1,8 @@
+# requirements.txt for Locust performance testing
+locust>=2.20.0
+
+# Optional, for extra plugins (e.g., CSV feeding, test results export)
+locust-plugins>=4.0.0
+
+# Optional logging formatting and utilities
+python-dotenv>=1.0.0
