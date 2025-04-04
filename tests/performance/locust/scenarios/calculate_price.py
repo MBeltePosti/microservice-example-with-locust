@@ -4,8 +4,8 @@ from locust import task, tag
 
 class CalculatePriceUser(BaseUser):
 
-    @tag("pricing", "feature", "load")
     @task
+    @tag("pricing", "feature", "load")
     def calculate_price(self):
         # The users exist already in example_data.py of the microservice, so we are not creating new ones.
         payload = {"customers": ["customer_1", "customer_2"]}

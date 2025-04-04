@@ -5,8 +5,8 @@ from locust import task, tag
 class MagicEndpointUser(BaseUser):
     """Magic endpoint user for testing the /do_your_magic endpoint. This endpoint in sample microservice is used to provide example if there was an endpoint with async method call. We're including it in performance tests just to cover all endpoints"""
 
-    @tag("magic", "feature", "stress")
     @task
+    @tag("magic", "feature", "stress")
     def call_magic(self):
         payload = {"input": "meaningless payload", "energy": "average"}
 

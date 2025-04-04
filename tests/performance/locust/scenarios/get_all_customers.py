@@ -3,8 +3,9 @@ from locust import task, tag
 
 
 class GetAllCustomersUser(BaseUser):
-    @tag("customers", "baseline")
+
     @task
+    @tag("customers", "baseline")
     def get_customers(self):
         with self.get(
             "/customers",
