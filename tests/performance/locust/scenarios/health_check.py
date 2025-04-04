@@ -3,6 +3,7 @@ from locust import task, tag
 
 
 class HealthCheckUser(BaseUser):
+    abstract = True
 
     @task
     @tag("sanity", "health")

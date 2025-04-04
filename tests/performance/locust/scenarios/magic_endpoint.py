@@ -3,6 +3,7 @@ from locust import task, tag
 
 
 class MagicEndpointUser(BaseUser):
+    abstract = True
     """Magic endpoint user for testing the /do_your_magic endpoint. This endpoint in sample microservice is used to provide example if there was an endpoint with async method call. We're including it in performance tests just to cover all endpoints"""
 
     @task

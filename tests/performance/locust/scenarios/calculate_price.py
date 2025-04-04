@@ -3,6 +3,7 @@ from locust import task, tag
 
 
 class CalculatePriceUser(BaseUser):
+    abstract = True
 
     @task
     @tag("pricing", "feature", "load")

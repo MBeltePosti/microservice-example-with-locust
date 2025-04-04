@@ -3,6 +3,7 @@ from locust import task, tag
 
 
 class GetAllCustomersUser(BaseUser):
+    abstract = True
 
     @task
     @tag("customers", "baseline")

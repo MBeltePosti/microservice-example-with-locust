@@ -40,10 +40,10 @@ This checklist defines the step-by-step tasks to build a Dockerized performance 
   - [✅] `DELETE /customers/<id>` to delete the customer
 - [✅] Add `MagicEndpointUser` → tests `POST /do_your_magic`
 - [✅] Add `CalculatePriceUser` → tests `POST /calculate_price` with valid customer data
-- [ ] Add `.github/workflows/perf-test.yml` GitHub Actions pipeline:
-  - [ ] Spin up microservice container
-  - [ ] Run Locust in headless mode for selected test users
-  - [ ] Save or print Locust stats as CI artifacts
+- [✅] Add `.github/workflows/perf-test.yml` GitHub Actions pipeline:
+  - [✅] Spin up microservice container
+  - [✅] Run Locust in headless mode for selected test users
+  - [✅] Save or print Locust stats as CI artifacts
 
 ---
 
@@ -61,11 +61,11 @@ This checklist defines the step-by-step tasks to build a Dockerized performance 
 
 ## 🔧 Phase 5: Orchestration & Local UX
 
-- [ ] Create root-level `docker-compose.yml` to orchestrate:
-  - [ ] Microservice container
-  - [ ] Locust master + 3 workers
+- [✅] Create root-level `docker-compose.yml` to orchestrate:
+  - [✅] Microservice container
+  - [✅] Locust master + 3 workers
   - [ ] Robot Framework container
-- [ ] Use `.env` file for flexible config
+- [✅] Use `.env` file for flexible config
 - [ ] Add `Makefile` or shell scripts:
   - [ ] `make up` → launch all
   - [ ] `make test` → run tests
