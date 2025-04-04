@@ -1,3 +1,20 @@
+# for purposes of learning, a microservice example with locust
+
+The forked microservice is at the root with small changes. 
+The Locust tests are in tests/performance/locust.
+
+docker-compose.yml is set up for sole purpose of launching microservice container, then launch Locust Master container and three Locust worker containers. Idea being to demonstrate scaling of the locust performance tests in distributed set up. Each container could be easily placed in their own servers.
+
+# Starting
+Locally using Docker you can start microservice and launch locust using: 
+
+    docker-compose up --build
+
+Running it on GitHub Actions there is .github/workflows/perf-test.yml. This workflow will start the microservice and execute tests in headless mode using command overrides defined there. I didn't add more complexity to it since gthat wasn't the overarching goal of this exercise.
+In real life we may not want to do all of this in a single workflow file, launching and running inside GitHub Actions. After all, performance tests should be executed against real environment with specific goals. 
+
+Also we would benefit from versioning.
+
 # microservice-python-example
 A small example of a REST like microservice written in python
 
@@ -15,6 +32,7 @@ It implements the basic REST routes for an example customer resource.
     
     POST /do_your_magic: Barebone example for a simple service
     POST /calculate_price: (Simple) example for a possible price calculation
+    GET /health: check health
 
 Additionally there is a endpoint called "do_your_magic" as an barebone example on how to implement a simple service.
 
